@@ -1,48 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/themes/colors.dart';
+import '../models/coffee_machine.dart';
+import '../widgets/coffee_card.dart';
+import 'details_screen.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomeScreenState extends State<HomeScreen> {
+  List<CoffeeMachine> machines = [
+    CoffeeMachine(
+      name: "Machine à café Emma",
+      isWorking: true,
+    ),
+    CoffeeMachine(
+      name: "Machine à café Hugo",
+      isWorking: false,
+    ),
+    CoffeeMachine(
+      name: "Machine à café Gabriel",
+      isWorking: true,
+    ),
+    CoffeeMachine(
+      name: "Machine à café Jade",
+      isWorking: false,
+    ),
+    CoffeeMachine(
+      name: "Machine à café Bernard",
+      isWorking: false,
+    ),
+  ];
 
-  void _incrementCounter() {
+  void toggleFavorite(int index) {
     setState(() {
-      _counter++;
+      machines[index].isFavorite = !machines[index].isFavorite;
+      machines.sort((a, b) => (b.isFavorite ? 1 : 0).compareTo(a.isFavorite ? 1 : 0));
     });
+  }
+
+  void navigateToDetails(CoffeeMachine machine) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyHomePage(title: 'Flutter Hello World'),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(widget.title),
+        backgroundColor: AppColors.primary,
+        title: const Text("VirtuCafé", style: TextStyle(color: Colors.white)),
+        centerTitle: true,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             const Text(
-              'Vous avez appuyé sur le bouton ce nombre de fois:',
-              style: TextStyle(fontSize: 16),
+              "Choisissez votre machine à café",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Text(
-              '$_counter',
-              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+            const SizedBox(height: 10),
+            Expanded(
+              child: GridView.builder(
+                itemCount: machines.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.8,
+                ),
+                itemBuilder: (context, index) {
+                  return CoffeeCard(
+                    machine: machines[index],
+                    onFavoriteToggle: () => toggleFavorite(index),
+                    onTap: () => navigateToDetails(machines[index]),
+                  );
+                },
+              ),
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Incrémenter',
-        child: const Icon(Icons.add),
       ),
     );
   }
