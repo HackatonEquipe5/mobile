@@ -6,4 +6,6 @@ class AppColors {
   static const Color etat_machine_work = Color.fromRGBO(223, 254, 212, 1);
   static const Color etat_machine_not_work = Color.fromRGBO(7, 24, 45, 1);
   static const Color secondary = Color.fromRGBO(161, 179, 240, 1);
+  static const Color failure_text = Color.fromRGBO(255, 0, 0, 1);
+  static const Color success_text = Color.fromRGBO(223, 254, 212, 1);
 }

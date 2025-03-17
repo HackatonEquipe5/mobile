@@ -1,48 +1,75 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import '../models/coffee_machine.dart';
+import '../widgets/record_button.dart';
+import '../themes/colors.dart';
+import '../widgets/result_card.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class DetailsScreen extends StatefulWidget {
+  final CoffeeMachine machine;
 
-  final String title;
+  const DetailsScreen({super.key, required this.machine});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<DetailsScreen> createState() => _DetailsScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _DetailsScreenState extends State<DetailsScreen> {
+  late List<Map<String, dynamic>> responses;
 
-  void _incrementCounter() {
+  @override
+  void initState() {
+    super.initState();
+    _generateResponses();
+  }
+
+  void _generateResponses() {
     setState(() {
-      _counter++;
+      responses = List.generate(
+        4,
+            (index) {
+          bool isSuccess = Random().nextBool();
+          String text = isSuccess
+              ? "${widget.machine.name} a réussi à faire votre café"
+              : "${widget.machine.name} n’a pas réussi à faire votre café";
+          return {"text": text, "isSuccess": isSuccess};
+        },
+      );
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Vous avez appuyé sur le bouton ce nombre de fois:',
-              style: TextStyle(fontSize: 16),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              color: AppColors.primary,
+              child: Center(
+                child: Text(
+                  widget.machine.name,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
-            Text(
-              '$_counter',
-              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+            Expanded(
+              child: ListView(
+                children: responses
+                    .map((resp) =>
+                    ResultCard(text: resp["text"], isSuccess: resp["isSuccess"]))
+                    .toList(),
+              ),
             ),
+            const RecordButton(),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Incrémenter',
-        child: const Icon(Icons.add),
       ),
     );
   }
