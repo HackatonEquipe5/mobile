@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../models/coffee_machine.dart';
+import '../widgets/header_widget.dart';
 import '../widgets/record_button.dart';
 import '../themes/colors.dart';
 import '../widgets/result_card.dart';
@@ -45,20 +46,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
         backgroundColor: AppColors.background,
         body: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              color: AppColors.primary,
-              child: Center(
-                child: Text(
-                  widget.machine.name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
+            const SizedBox(height: 10),
+            HeaderWidget(title: widget.machine.name),
             Expanded(
               child: ListView(
                 children: responses

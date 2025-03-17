@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/themes/colors.dart';
 import '../models/coffee_machine.dart';
 import '../widgets/coffee_card.dart';
+import '../widgets/header_widget.dart';
 import 'details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -53,41 +54,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        title: const Text("VirtuCafé", style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const Text(
-              "Choisissez votre machine à café",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: GridView.builder(
-                itemCount: machines.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.8,
-                ),
-                itemBuilder: (context, index) {
-                  return CoffeeCard(
-                    machine: machines[index],
-                    onFavoriteToggle: () => toggleFavorite(index),
-                    onTap: () => navigateToDetails(machines[index]),
-                  );
-                },
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              HeaderWidget(title: "VirtuCafé"),
+              const SizedBox(height: 10),
+              const Text(
+                "Choisissez votre machine à café",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              Expanded(
+                child: GridView.builder(
+                  itemCount: machines.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.8,
+                  ),
+                  itemBuilder: (context, index) {
+                    return CoffeeCard(
+                      machine: machines[index],
+                      onFavoriteToggle: () => toggleFavorite(index),
+                      onTap: () => navigateToDetails(machines[index]),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
