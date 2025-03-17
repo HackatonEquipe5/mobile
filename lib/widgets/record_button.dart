@@ -48,7 +48,7 @@ class _RecordButtonState extends State<RecordButton> {
       Directory dir = await getApplicationDocumentsDirectory();
       String path = '${dir.path}/myFile.m4a';
       await _record.start(
-        const RecordConfig(encoder: AudioEncoder.aacLc, bitRate: 128000),
+        const RecordConfig(encoder: AudioEncoder.pcm16bits),
         path: path,
       );
       print("Enregistrement démarré");
