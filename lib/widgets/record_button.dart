@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
 import '../themes/colors.dart';
 
 class RecordButton extends StatefulWidget {
@@ -14,16 +17,55 @@ class _RecordButtonState extends State<RecordButton> {
   bool isRecording = false;
   List<int> soundLevels = List.generate(6, (index) => 2);
   Timer? _timer;
+  final AudioRecorder _record = AudioRecorder();
+  String? audioPath;
 
-  void _toggleRecording() {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _toggleRecording() async {
     setState(() {
       isRecording = !isRecording;
     });
 
     if (isRecording) {
-      _startSoundAnimation();
+      if (await _record.hasPermission()) {
+        _startSoundAnimation();
+        await _startRecording();
+      } else {
+        print("Permission non accordée");
+      }
     } else {
       _timer?.cancel();
+      await _stopRecording();
+    }
+  }
+
+  Future<void> _startRecording() async {
+    try {
+      Directory dir = await getApplicationDocumentsDirectory();
+      String path = '${dir.path}/myFile.m4a';
+      await _record.start(
+        const RecordConfig(encoder: AudioEncoder.aacLc, bitRate: 128000),
+        path: path,
+      );
+      print("Enregistrement démarré");
+    } catch (e) {
+      print("Erreur lors du démarrage de l'enregistrement: $e");
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    try {
+      final path = await _record.stop();
+      print("Enregistrement arrêté, fichier sauvegardé à: $path");
+      setState(() {
+        isRecording = false;
+      });
+    } catch (e) {
+      print("Erreur lors de l'arrêt de l'enregistrement: $e");
     }
   }
 
@@ -38,6 +80,7 @@ class _RecordButtonState extends State<RecordButton> {
   @override
   void dispose() {
     _timer?.cancel();
+    _record.dispose();
     super.dispose();
   }
 
