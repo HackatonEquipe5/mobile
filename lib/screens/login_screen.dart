@@ -15,7 +15,11 @@ class LoginScreen extends StatelessWidget {
 
   Future<String?> _authUser(LoginData data) async {
     return Future.delayed(loginTime).then((_) async {
-      return await ApiService().connectUser(data.name, data.password);
+      final response = await ApiService().connectUser(data.name, data.password);
+      if (response == null) {
+        return 'Nom d\'utilisateur ou mot de passe incorrect';
+      }
+      return null;
     });
   }
 
