@@ -1,0 +1,98 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'api_url.dart';
+
+class ApiService {
+  final String baseUrl = ApiUrl.domaine;
+
+  Future<String?> postOrder() async {
+    try {
+      Directory dir = await getApplicationDocumentsDirectory();
+      String path = '${dir.path}/myOrder.m4a';
+      File file = File(path);
+
+      if (!await file.exists()) {
+        throw Exception("Le fichier n'existe pas : $path");
+      }
+
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('$baseUrl${ApiUrl.post_order}'));
+      request.files.add(await http.MultipartFile.fromPath('file', file.path));
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        print(ContentType.json);
+        return jsonResponse["machineId"];
+      } else {
+        throw Exception(
+            "Erreur lors de l'envoi du fichier : ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Erreur dans postOrder: $e");
+      return null;
+    }
+  }
+
+  Future<bool> connectObject(String token) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl${ApiUrl.get_machine}'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        return true;
+      } else {
+        print("Erreur lors de la connexion de l'objet : ${response.statusCode}");
+        return false;
+      }
+    } catch (e) {
+      print("Erreur dans connectObject: $e");
+      return false;
+    }
+  }
+
+  Future<bool> createUser(Map<String, dynamic> userData) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl${ApiUrl.create_user}'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(userData),
+      );
+
+      return response.statusCode == 201;
+    } catch (e) {
+      print("Erreur dans createUser: $e");
+      return false;
+    }
+  }
+
+  Future<String?> connectUser(Map<String, dynamic> loginData) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl${ApiUrl.connect_user}'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(loginData),
+      );
+
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        return jsonResponse["token"];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Erreur dans connectUser: $e");
+      return null;
+    }
+  }
+}
