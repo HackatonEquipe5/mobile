@@ -76,6 +76,8 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({"email": login, "password": password, "lastName": "Jhon", "firstName": "Doe"}),
       );
+      print(response.body);
+      print(response.statusCode);
 
       return response.statusCode == 201;
     } catch (e) {
@@ -89,11 +91,8 @@ class ApiService {
       print("test");
       final response = await http.post(
         Uri.parse('$baseUrl${ApiUrl.connect_user}'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"login": login, "password": password}),
+        body: jsonEncode({"email": login, "password": password}),
       );
-      print(response.body);
-      print(response.statusCode);
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
