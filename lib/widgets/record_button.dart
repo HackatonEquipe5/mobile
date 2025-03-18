@@ -46,12 +46,11 @@ class _RecordButtonState extends State<RecordButton> {
   Future<void> _startRecording() async {
     try {
       Directory dir = await getApplicationDocumentsDirectory();
-      String path = '${dir.path}/myFile.m4a';
+      String path = '${dir.path}/myOrder.m4a';
       await _record.start(
         const RecordConfig(encoder: AudioEncoder.pcm16bits),
         path: path,
       );
-      print("Enregistrement démarré");
     } catch (e) {
       print("Erreur lors du démarrage de l'enregistrement: $e");
     }
