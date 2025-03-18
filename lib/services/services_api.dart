@@ -27,7 +27,7 @@ class ApiService {
       final token = preferences.getString('token');
       request.headers['Authorization'] = 'Bearer $token';
 
-      request.headers['id_device'] = machine.id;
+      request.fields['id_device'] = machine.id;
 
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);

@@ -24,16 +24,15 @@ class CoffeeMachine {
           name: item['name'] ?? '',
           imageUrl: item['imageUrl'],
           isFavorite: item['isFavorite'] ?? false,
-          id: item['_id'] ?? '00-01',
+          id: item['id_device'] ?? '00-01',
           isWorking: item['isWorking'] ?? true,
         )).toList();
       } else if (e is Map<String, dynamic>) {
-        // Si c'est un seul objet et non une liste
         return [CoffeeMachine(
           name: e['name'] ?? '',
           imageUrl: e['imageUrl'],
           isFavorite: e['isFavorite'] ?? false,
-          id: e['_id'] ?? '00-01',
+          id: e['id_device'] ?? '00-01',
           isWorking: e['isWorking'] ?? true,
         )];
       }
