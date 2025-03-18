@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/coffee_machine.dart';
 import 'api_url.dart';
 
 class ApiService {
   final String baseUrl = ApiUrl.domaine;
 
-  Future<String?> postOrder() async {
+  Future<String?> postOrder(CoffeeMachine machine) async {
     try {
       Directory dir = await getApplicationDocumentsDirectory();
       String path = '${dir.path}/myOrder.m4a';
@@ -21,6 +23,12 @@ class ApiService {
           'POST', Uri.parse('$baseUrl${ApiUrl.post_order}'));
       request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
+      final preferences = await SharedPreferences.getInstance();
+      final token = preferences.getString('token');
+      request.headers['Authorization'] = 'Bearer $token';
+
+      request.headers['id'] = machine.id;
+
       var streamedResponse = await request.send();
       var response = await http.Response.fromStream(streamedResponse);
 
@@ -30,7 +38,7 @@ class ApiService {
         return jsonResponse["machineId"];
       } else {
         throw Exception(
-            "Erreur lors de l'envoi du fichier : ${response.statusCode}");
+            "Erreur lors de l'envoi du fichier : ${response.body}");
       }
     } catch (e) {
       print("Erreur dans postOrder: $e");

@@ -4,10 +4,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
+import '../models/coffee_machine.dart';
+import '../services/services_api.dart';
 import '../themes/colors.dart';
 
 class RecordButton extends StatefulWidget {
-  const RecordButton({super.key});
+  final CoffeeMachine machine;
+  const RecordButton({super.key, required this.machine});
 
   @override
   State<RecordButton> createState() => _RecordButtonState();
@@ -63,9 +66,14 @@ class _RecordButtonState extends State<RecordButton> {
       setState(() {
         isRecording = false;
       });
+      _postAudioFile();
     } catch (e) {
       print("Erreur lors de l'arrêt de l'enregistrement: $e");
     }
+  }
+
+  Future<void> _postAudioFile() async {
+      await ApiService().postOrder(widget.machine);
   }
 
   void _startSoundAnimation() {

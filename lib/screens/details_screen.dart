@@ -56,7 +56,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     .toList(),
               ),
             ),
-            const RecordButton(),
+            RecordButton(machine: widget.machine,),
           ],
         ),
       ),
