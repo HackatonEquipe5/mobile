@@ -66,7 +66,7 @@ class ApiService {
       final response = await http.post(
         Uri.parse('$baseUrl${ApiUrl.create_user}'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({"login": login, "password": password}),
+        body: jsonEncode({"email": login, "password": password, "lastName": "Jhon", "firstName": "Doe"}),
       );
 
       return response.statusCode == 201;
@@ -78,11 +78,14 @@ class ApiService {
 
   Future<String?> connectUser(String login, String password) async {
     try {
+      print("test");
       final response = await http.post(
         Uri.parse('$baseUrl${ApiUrl.connect_user}'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({"login": login, "password": password}),
       );
+      print(response.body);
+      print(response.statusCode);
 
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);

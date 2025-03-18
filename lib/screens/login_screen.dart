@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:mobile/services/services_api.dart';
 import '../themes/colors.dart';
-import '../themes/icons.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -20,19 +19,17 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
-  Future<String?> _signupUser(SignupData data) {
+  Future<String?> _signupUser(SignupData data) async {
     return Future.delayed(loginTime).then((_) async {
       if (data.name == null || data.password == null) {
         return 'Veuillez remplir tous les champs';
       }
-      final name = data.name;
-      final password = data.password;
-      final user = await ApiService().createUser(name!, password!);
-      if (user == null) {
-        return await ApiService().connectUser(name, password);
-      } else {
-        return "Erreur lors de la création de l'utilisateur";
-      }
+
+      final name = data.name!;
+      final password = data.password!;
+
+      await ApiService().createUser(name, password);
+      return await ApiService().connectUser(name, password);
     });
   }
 
@@ -57,8 +54,8 @@ class LoginScreen extends StatelessWidget {
           },
           onRecoverPassword: _recoverPassword,
           messages: LoginMessages(
-            userHint: 'Username',
-            passwordHint: 'Password',
+            userHint: 'Nom d\'utilisateur',
+            passwordHint: 'Mot de passe',
           ),
           userType: LoginUserType.name,
           hideForgotPasswordButton: true,
