@@ -12,7 +12,7 @@ class ApiService {
   Future<String?> postOrder(CoffeeMachine machine) async {
     try {
       Directory dir = await getApplicationDocumentsDirectory();
-      String path = '${dir.path}/myOrder.m4a';
+      String path = '${dir.path}/myOrder.wav';
       File file = File(path);
 
       if (!await file.exists()) {
