@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:mobile/services/services_api.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../themes/colors.dart';
 import 'home_screen.dart';
 
@@ -19,6 +20,8 @@ class LoginScreen extends StatelessWidget {
       if (response == null) {
         return 'Nom d\'utilisateur ou mot de passe incorrect';
       }
+      final preferences = await SharedPreferences.getInstance();
+      preferences.setString('token', response);
       return null;
     });
   }
