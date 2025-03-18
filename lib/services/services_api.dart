@@ -61,12 +61,12 @@ class ApiService {
     }
   }
 
-  Future<bool> createUser(Map<String, dynamic> userData) async {
+  Future<bool> createUser(String login, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl${ApiUrl.create_user}'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(userData),
+        body: jsonEncode({"login": login, "password": password}),
       );
 
       return response.statusCode == 201;
@@ -76,12 +76,12 @@ class ApiService {
     }
   }
 
-  Future<String?> connectUser(Map<String, dynamic> loginData) async {
+  Future<String?> connectUser(String login, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl${ApiUrl.connect_user}'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(loginData),
+        body: jsonEncode({"login": login, "password": password}),
       );
 
       if (response.statusCode == 200) {
