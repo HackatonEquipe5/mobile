@@ -46,8 +46,11 @@ class ApiService {
     }
   }
 
-  Future<bool> connectObject(String token) async {
+  Future<List<CoffeeMachine>> connectObject() async {
+    List<CoffeeMachine> machines = [];
     try {
+      final preferences = await SharedPreferences.getInstance();
+      final token = preferences.getString('token');
       final response = await http.get(
         Uri.parse('$baseUrl${ApiUrl.get_machine}'),
         headers: {
@@ -57,15 +60,16 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        print(response.body);
-        return true;
+        final data = jsonDecode(response.body) as List;
+        machines = await CoffeeMachine.fromJson(data);
+        return machines;
       } else {
         print("Erreur lors de la connexion de l'objet : ${response.statusCode}");
-        return false;
+        return machines;
       }
     } catch (e) {
       print("Erreur dans connectObject: $e");
-      return false;
+      return machines;
     }
   }
 
@@ -76,8 +80,6 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({"email": login, "password": password, "lastName": "Jhon", "firstName": "Doe"}),
       );
-      print(response.body);
-      print(response.statusCode);
 
       return response.statusCode == 201;
     } catch (e) {
@@ -88,7 +90,6 @@ class ApiService {
 
   Future<String?> connectUser(String login, String password) async {
     try {
-      print("test");
       final response = await http.post(
         Uri.parse('$baseUrl${ApiUrl.connect_user}'),
         body: jsonEncode({"email": login, "password": password}),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/services/services_api.dart';
 import 'package:mobile/themes/colors.dart';
 import '../models/coffee_machine.dart';
 import '../widgets/coffee_card.dart';
@@ -13,28 +14,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<CoffeeMachine> machines = [
-    CoffeeMachine(
-      name: "Machine à café Emma",
-      isWorking: true,
-    ),
-    CoffeeMachine(
-      name: "Machine à café Hugo",
-      isWorking: false,
-    ),
-    CoffeeMachine(
-      name: "Machine à café Gabriel",
-      isWorking: true,
-    ),
-    CoffeeMachine(
-      name: "Machine à café Jade",
-      isWorking: false,
-    ),
-    CoffeeMachine(
-      name: "Machine à café Bernard",
-      isWorking: false,
-    ),
-  ];
+  List<CoffeeMachine> machines = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getMachines();
+  }
+
+  void _getMachines() {
+    ApiService().connectObject().then((result) {
+      setState(() {
+        machines = result;
+      });
+    }).catchError((error) {
+      print('Erreur lors de la récupération des machines: $error');
+    });
+  }
 
   void toggleFavorite(int index) {
     setState(() {
